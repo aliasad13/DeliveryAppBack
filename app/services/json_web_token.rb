@@ -10,4 +10,10 @@ class JsonWebToken
     decoded = JWT.decode(token, SECRET_KEY)[0]
     HashWithIndifferentAccess.new decoded
   end
+
+  def self.encode_refresh_token(user_id)
+    payload = { user_id: user_id }
+    encode(payload, 7.days.from_now)
+  end
+
 end
