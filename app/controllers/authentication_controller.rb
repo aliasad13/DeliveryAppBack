@@ -11,7 +11,7 @@ class AuthenticationController < ApplicationController
   end
 
   def login
-    @user = User.find_by(email: params[:email])
+    @user = User.find_by('email = :login OR username = :login', login: params[:email])
     if @user&.authenticate(params[:password])
       tokens = create_tokens(@user)
       render json: { accessToken: tokens[:access_token], refreshToken: tokens[:refresh_token], username: @user.username }, status: :ok
@@ -27,7 +27,7 @@ class AuthenticationController < ApplicationController
       decoded = JsonWebToken.decode(refresh_token)
       @user = User.find(decoded[:user_id])
       tokens = create_tokens(@user)
-      render json: { access_token: tokens[:access_token], refresh_token: tokens[:refresh_token] }, status: :ok
+      render json: { accessToken: tokens[:access_token], refreshToken: tokens[:refresh_token] }, status: :ok
     rescue JWT::DecodeError
       render json: { errors: ['Invalid token'] }, status: :unauthorized
     end
