@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, only: [:register, :login, :refresh]
+  skip_before_action :authenticate_request, only: [:refresh, :register, :login]
 
   def register
     @user = User.new(user_params)
@@ -21,9 +21,11 @@ class AuthenticationController < ApplicationController
     end
   end
 
-  def refresh
+  def refresh #refresh token in removed from uthenticated becs refresh token dont have to look at expiration time. the only requests to refresh endpoint is to renew the expired tokens
+    if request.headers.present? and request.headers['Authorization']
     header = request.headers['Authorization']
     refresh_token = header.split(' ').last if header
+    if refresh_token != 'null'
     begin
       decoded = JsonWebToken.decode(refresh_token)
       @user = User.find(decoded[:user_id])
@@ -31,6 +33,12 @@ class AuthenticationController < ApplicationController
       render json: { accessToken: tokens[:access_token], refreshToken: tokens[:refresh_token] }, status: :ok
     rescue JWT::DecodeError
       render json: { errors: ['Invalid token'] }, status: :unauthorized
+    end
+    else
+      render json: { errors: ['Invalid token'] }, status: :unauthorized
+    end
+    else
+      render json: { errors: ['Header/Token absent'] }, status: :unauthorized
     end
   end
 
