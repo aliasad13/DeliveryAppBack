@@ -22,7 +22,8 @@ module Authenticatable
             elsif decoded[:user_id]
               current_user = User.find_by(id: decoded[:user_id])
               if current_user
-                render json: { user: "authentication success" }, status: :ok
+                #donot provide any response here, if no response is provided it will move on to the required action,
+                # if you provide a response like render json, it will render that only
               else
                 render json: { errors: 'No user record found' }, status: :unauthorized
               end

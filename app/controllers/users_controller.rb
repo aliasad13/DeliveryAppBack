@@ -9,7 +9,8 @@ class UsersController < ApplicationController
         if decoded[:user_id]
           current_user = User.find_by(id: decoded[:user_id])
           if current_user
-            render json: { user: current_user }, status: :ok
+            user_data = current_user.as_json(except: [:password_digest])
+            render json: { user: user_data }, status: :ok
           else
             render json: { errors: 'no user record found' }, status: :unauthorized
           end
