@@ -21,19 +21,21 @@ class AuthenticationController < ApplicationController
     end
   end
 
-  def refresh #refresh token in removed from uthenticated becs refresh token dont have to look at expiration time. the only requests to refresh endpoint is to renew the expired tokens
+  def refresh #refresh token in removed from authenticated becs refresh token dont have to look at expiration time.
+    # the only requests to refresh endpoint is to renew the expired tokens
     if request.headers.present? and request.headers['Authorization']
     header = request.headers['Authorization']
     refresh_token = header.split(' ').last if header
     if refresh_token != 'null'
-    begin
       decoded = JsonWebToken.decode(refresh_token)
-      @user = User.find(decoded[:user_id])
-      tokens = create_tokens(@user)
-      render json: { accessToken: tokens[:access_token], refreshToken: tokens[:refresh_token] }, status: :ok
-    rescue JWT::DecodeError
-      render json: { errors: ['Invalid token'] }, status: :unauthorized
-    end
+      decoded = nil
+      if decoded.nil?
+        render json: { errors: ['Invalid token'] }, status: :unauthorized
+      else
+        @user = User.find(decoded[:user_id])
+        tokens = create_tokens(@user)
+        render json: { accessToken: tokens[:access_token], refreshToken: tokens[:refresh_token] }, status: :ok
+      end
     else
       render json: { errors: ['Invalid token'] }, status: :unauthorized
     end

@@ -17,7 +17,6 @@ module Authenticatable
         begin
           decoded = JsonWebToken.decode(token)
           if decoded
-            decoded = nil
             if decoded[:exp] && Time.at(decoded[:exp]) < Time.now
               render json: { errors: 'Token has expired' }, status: :unauthorized
             elsif decoded[:user_id]
