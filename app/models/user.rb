@@ -7,6 +7,8 @@ class User < ApplicationRecord
             length: { minimum: 5 },
             if: -> { new_record? || !password.nil? }
   validate :username_must_not_contain_email_patterns
+  validates :first_name, presence: true
+  validates :last_name, presence: true
 
   def username_must_not_contain_email_patterns
     if username =~ /\.(com|org|net|gov|edu|co\.in|in|us|uk|biz|info|name|me|io|ai|app|dev)$/

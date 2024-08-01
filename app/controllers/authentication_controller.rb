@@ -53,7 +53,7 @@ class AuthenticationController < ApplicationController
   private
 
   def user_params
-    params.require(:authentication).permit(:username, :email, :password, :password_confirmation, :confirm_success_url)
+    params.require(:authentication).permit(:first_name, :last_name, :username, :email, :password, :password_confirmation, :confirm_success_url)
   end
 
   def create_tokens(user)
