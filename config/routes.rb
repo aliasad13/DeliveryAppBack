@@ -15,8 +15,11 @@ Rails.application.routes.draw do
       post 'send_mail_verification_otp'
       patch 'update_email'
       patch 'update_password'
+      patch :update_profile_picture
     end
   end
+
+  resources :profile_pictures, only: [:create, :update, :destroy]
   #delete
 
 
